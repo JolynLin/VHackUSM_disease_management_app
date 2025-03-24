@@ -1,0 +1,102 @@
+{
+    "medicines": {
+            "loratadine": {
+              "name": "Loratadine",
+              "usage": "Treats allergies without causing drowsiness.",
+              "side_effects": "Dry mouth, fatigue.",
+              "precautions": "Avoid alcohol. Suitable for daily use.",
+              "keywords": ["allergy", "loratadine", "hay fever"]
+            },
+            "metformin": {
+              "name": "Metformin",
+              "usage": "Helps control blood sugar levels in type 2 diabetes.",
+              "side_effects": "Stomach upset, metallic taste.",
+              "precautions": "Take with food. Monitor kidney function.",
+              "keywords": ["diabetes", "blood sugar", "metformin"]
+            },
+            "omeprazole": {
+              "name": "Omeprazole",
+              "usage": "Reduces stomach acid, treats GERD and ulcers.",
+              "side_effects": "Nausea, headache, flatulence.",
+              "precautions": "Not for long-term use unless prescribed.",
+              "keywords": ["GERD", "acid", "omeprazole", "ulcer"]
+            },
+            "loperamide": {
+              "name": "Loperamide",
+              "usage": "Used to treat acute diarrhea.",
+              "side_effects": "Constipation, dizziness.",
+              "precautions": "Do not exceed recommended dose.",
+              "keywords": ["diarrhea", "loperamide", "stomach"]
+            },
+            "salbutamol": {
+              "name": "Salbutamol",
+              "usage": "Relieves bronchospasm in asthma, wheezing.",
+              "side_effects": "Shakiness, increased heart rate.",
+              "precautions": "Use with a spacer if prescribed. Monitor heart rate.",
+              "keywords": ["asthma", "salbutamol", "wheezing", "inhaler"]
+            },
+            "azithromycin": {
+              "name": "Azithromycin",
+              "usage": "Antibiotic used to treat bacterial infections.",
+              "side_effects": "Diarrhea, nausea, abdominal pain.",
+              "precautions": "Take the full dose. Take with food if stomach upset.",
+              "keywords": ["infection", "antibiotic", "azithromycin"]
+            },
+            "aspirin": {
+              "name": "Aspirin",
+              "usage": "Relieves pain, inflammation, and prevents blood clots.",
+              "side_effects": "Stomach irritation, bleeding, ulcers.",
+              "precautions": "Avoid if you have ulcers or bleeding disorders.",
+              "keywords": ["pain", "aspirin", "blood clot", "anti-inflammatory"]
+            },
+            "diphenhydramine": {
+              "name": "Diphenhydramine",
+              "usage": "Used to relieve allergy symptoms and as a sleep aid.",
+              "side_effects": "Drowsiness, dry mouth, dizziness.",
+              "precautions": "Avoid alcohol. Not for long-term use.",
+              "keywords": ["allergy", "sleep", "diphenhydramine"]
+            },
+            "clotrimazole": {
+              "name": "Clotrimazole",
+              "usage": "Treats fungal infections like athlete’s foot and yeast infections.",
+              "side_effects": "Itching, irritation, redness.",
+              "precautions": "Apply only to affected area. Avoid eyes and mouth.",
+              "keywords": ["fungal", "clotrimazole", "yeast", "infection"]
+            },
+            "hydrocortisone": {
+              "name": "Hydrocortisone",
+              "usage": "Relieves skin inflammation, itching, and rashes.",
+              "side_effects": "Skin thinning, burning, irritation.",
+              "precautions": "Use a thin layer. Avoid prolonged use.",
+              "keywords": ["rash", "itching", "hydrocortisone", "eczema"]
+            },
+            "ranitidine": {
+              "name": "Ranitidine",
+              "usage": "Treats and prevents ulcers and acid reflux.",
+              "side_effects": "Headache, constipation, diarrhea.",
+              "precautions": "Avoid long-term use unless prescribed.",
+              "keywords": ["acid", "ranitidine", "reflux", "ulcer"]
+            },
+            "doxycycline": {
+              "name": "Doxycycline",
+              "usage": "Broad-spectrum antibiotic for infections like acne or respiratory tract infections.",
+              "side_effects": "Sun sensitivity, nausea, vomiting.",
+              "precautions": "Avoid sunlight. Take with plenty of water.",
+              "keywords": ["infection", "antibiotic", "doxycycline"]
+            },
+            "famotidine": {
+              "name": "Famotidine",
+              "usage": "Treats acid reflux and stomach ulcers.",
+              "side_effects": "Headache, constipation, dizziness.",
+              "precautions": "Use for short-term relief unless prescribed.",
+              "keywords": ["acid", "reflux", "famotidine", "ulcer"]
+            },
+            "mefenamic_acid": {
+              "name": "Mefenamic Acid",
+              "usage": "Used to relieve pain from menstrual cramps, headaches, and inflammation.",
+              "side_effects": "Stomach pain, diarrhea, dizziness.",
+              "precautions": "Take with meals. Avoid in those with kidney issues.",
+              "keywords": ["pain", "inflammation", "mefenamic", "cramp"]
+            }
+    }
+} 

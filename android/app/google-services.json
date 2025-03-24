@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "949863089574",
+    "project_id": "diseasemanagementapp",
+    "storage_bucket": "diseasemanagementapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949863089574:android:1725e2f87c9538c348bb67",
+        "android_client_info": {
+          "package_name": "com.example.disease_management_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxs6QPotW3csL2LoXT3WyblwPy0wXo_Bo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
