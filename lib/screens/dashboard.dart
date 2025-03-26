@@ -56,18 +56,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeNotifications();
     _loadCheckedInDates();
     _loadTodayReminders();
+  }
+
+  Future<void> _initializeNotifications() async {
+    await NotificationService.init();
+    NotificationService.listenToAppointments();
+    NotificationService.listenToMedicineReminders();
   }
 
   void _loadCheckedInDates() async {
     final snapshot =
         await FirebaseFirestore.instance.collection('daily_logs').get();
-    final dates =
-        snapshot.docs.map((doc) {
-          final timestamp = doc['date'] as Timestamp;
-          return DateFormat('yyyy-MM-dd').format(timestamp.toDate());
-        }).toSet();
+    final dates = snapshot.docs.map((doc) {
+      final timestamp = doc['date'] as Timestamp;
+      return DateFormat('yyyy-MM-dd').format(timestamp.toDate());
+    }).toSet();
 
     setState(() => _checkedInDates = dates);
   }
@@ -77,12 +83,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
-    final snapshot =
-        await FirebaseFirestore.instance
-            .collection('reminders')
-            .where('time', isGreaterThanOrEqualTo: startOfDay)
-            .where('time', isLessThan: endOfDay)
-            .get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('reminders')
+        .where('time', isGreaterThanOrEqualTo: startOfDay)
+        .where('time', isLessThan: endOfDay)
+        .get();
 
     setState(() {
       _todayReminders = snapshot.docs;
@@ -453,8 +458,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onPressed:
-                    () => Navigator.pushNamed(context, '/lifestyle-tracker'),
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/lifestyle-tracker'),
               ),
             ),
           ],
@@ -777,8 +782,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           width: double.infinity,
           height: 50,
           child: ElevatedButton.icon(
-            onPressed:
-                () => Navigator.pushNamed(context, '/reminder-scheduler'),
+            onPressed: () =>
+                Navigator.pushNamed(context, '/reminder-scheduler'),
             icon: const Icon(Icons.add_circle_outline, size: 24),
             label: const Text(
               "Add New Medication",
