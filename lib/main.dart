@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/dashboard.dart';
 import 'screens/symptom_checker.dart';
 import 'screens/ai_diagnosis.dart';
-import 'screens/discussion_forum.dart';
+import 'screens/forum/forum_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/reminder_scheduler.dart';
 import 'screens/daily_lifestyle_tracker.dart';
@@ -22,11 +22,9 @@ void main() async {
   // Initialize notification service
   await NotificationService.init();
 
-
   // Start listening to appointments and medicine reminders
   NotificationService.listenToAppointments();
   NotificationService.listenToMedicineReminders();
-
 
   runApp(const MyApp());
 }
@@ -77,7 +75,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const DashboardScreen(),
         '/symptom-tracker': (context) => const SymptomCheckerPage(),
         '/ai-diagnosis': (context) => const AIDiagnosisScreen(),
-        '/forum': (context) => const DiscussionForumScreen(),
+        '/forum': (context) => const ForumPage(),
         '/medicine-lookup': (context) => const MedicineLookupPage(),
         '/reminder-scheduler': (context) => const ReminderSchedulerPage(),
         '/lifestyle-tracker': (context) => const DailyLifestyleTracker(),

@@ -17,10 +17,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
   DateTime? _selectedDay;
   Set<String> _checkedInDates = {};
 
+  // Sample health data (to be replaced with real data)
+  final Map<String, dynamic> healthData = {
+    'bloodPressure': {
+      'systolic': 120,
+      'diastolic': 80,
+      'lastChecked': '2 hours ago',
+      'status': 'normal',
+    },
+    'bloodSugar': {
+      'value': 95,
+      'unit': 'mg/dL',
+      'lastChecked': '4 hours ago',
+      'status': 'normal',
+    },
+    'heartRate': {
+      'value': 72,
+      'unit': 'bpm',
+      'lastChecked': '2 hours ago',
+      'status': 'normal',
+    },
+    'weight': {
+      'value': 70,
+      'unit': 'kg',
+      'lastChecked': 'Today',
+      'status': 'normal',
+    },
+    'temperature': {
+      'value': 36.6,
+      'unit': '°C',
+      'lastChecked': '2 hours ago',
+      'status': 'normal',
+    },
+  };
+
+  List<DocumentSnapshot> _todayReminders = [];
+
   @override
   void initState() {
     super.initState();
     _loadCheckedInDates();
+    _loadTodayReminders();
   }
 
   void _loadCheckedInDates() async {
@@ -35,6 +72,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() => _checkedInDates = dates);
   }
 
+  Future<void> _loadTodayReminders() async {
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('reminders')
+            .where('time', isGreaterThanOrEqualTo: startOfDay)
+            .where('time', isLessThan: endOfDay)
+            .get();
+
+    setState(() {
+      _todayReminders = snapshot.docs;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
@@ -46,23 +100,287 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: const Text(
           "Health Dashboard",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Poppins',
+          ),
         ),
         backgroundColor: Colors.blue.shade800,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+      body: RefreshIndicator(
+        onRefresh: () {
+          _loadCheckedInDates();
+          _loadTodayReminders();
+          return Future.value();
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 24),
+              _buildCheckInCard(alreadyCheckedIn),
+              const SizedBox(height: 24),
+              _buildMedicineRemindersSection(),
+              const SizedBox(height: 24),
+              _buildHealthMetricsSection(),
+              const SizedBox(height: 24),
+              _buildCalendarCard(),
+              const SizedBox(height: 24),
+              _buildMenuSection(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHealthMetricsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, bottom: 16.0),
+          child: Text(
+            "Your Health Metrics",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        _buildBloodPressureCard(),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildMetricCard(
+                "Blood Sugar",
+                "${healthData['bloodSugar']['value']}",
+                healthData['bloodSugar']['unit'],
+                healthData['bloodSugar']['lastChecked'],
+                healthData['bloodSugar']['status'],
+                Icons.water_drop,
+                Colors.red.shade100,
+                Colors.red,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildMetricCard(
+                "Heart Rate",
+                "${healthData['heartRate']['value']}",
+                healthData['heartRate']['unit'],
+                healthData['heartRate']['lastChecked'],
+                healthData['heartRate']['status'],
+                Icons.favorite,
+                Colors.pink.shade100,
+                Colors.pink,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildMetricCard(
+                "Weight",
+                "${healthData['weight']['value']}",
+                healthData['weight']['unit'],
+                healthData['weight']['lastChecked'],
+                healthData['weight']['status'],
+                Icons.monitor_weight,
+                Colors.orange.shade100,
+                Colors.orange,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildMetricCard(
+                "Temperature",
+                "${healthData['temperature']['value']}",
+                healthData['temperature']['unit'],
+                healthData['temperature']['lastChecked'],
+                healthData['temperature']['status'],
+                Icons.thermostat,
+                Colors.purple.shade100,
+                Colors.purple,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBloodPressureCard() {
+    return Card(
+      elevation: 4,
+      color: Colors.blue.shade100,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 24),
-            _buildCheckInCard(alreadyCheckedIn),
-            const SizedBox(height: 24),
-            _buildCalendarCard(),
-            const SizedBox(height: 24),
-            _buildMenuSection(),
+            Row(
+              children: [
+                Icon(
+                  Icons.favorite_border,
+                  size: 32,
+                  color: Colors.blue.shade700,
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Blood Pressure",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    const Text(
+                      "Systolic",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black87,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    Text(
+                      "${healthData['bloodPressure']['systolic']}",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    "/",
+                    style: TextStyle(
+                      fontSize: 40,
+                      color: Colors.blue.shade700,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Column(
+                  children: [
+                    const Text(
+                      "Diastolic",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black87,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    Text(
+                      "${healthData['bloodPressure']['diastolic']}",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue.shade700,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Text(
+                "Last checked: ${healthData['bloodPressure']['lastChecked']}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetricCard(
+    String title,
+    String value,
+    String unit,
+    String lastChecked,
+    String status,
+    IconData icon,
+    Color backgroundColor,
+    Color iconColor,
+  ) {
+    return Card(
+      elevation: 4,
+      color: backgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 28, color: iconColor),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Text(
+                "$value $unit",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: iconColor,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                "Last checked: $lastChecked",
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -304,6 +622,185 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _buildMedicineRemindersSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 8.0, bottom: 16.0),
+          child: Text(
+            "Today's Medicine Schedule",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        if (_todayReminders.isEmpty)
+          Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.check_circle_outline,
+                      size: 32,
+                      color: Colors.blue.shade700,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Text(
+                      "No medications scheduled for today",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          ...List.generate(
+            _todayReminders.length > 3 ? 3 : _todayReminders.length,
+            (index) {
+              final reminder = _todayReminders[index];
+              final time = (reminder['time'] as Timestamp).toDate();
+              return Card(
+                elevation: 4,
+                margin: const EdgeInsets.only(bottom: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.medication_outlined,
+                          size: 32,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              reminder['medicine'],
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${reminder['type']}, ${reminder['dose']} ${(int.tryParse(reminder['dose']) ?? 1) > 1 ? "units" : "unit"}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade600,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            DateFormat.jm().format(time),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade700,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            reminder['note'] ?? '',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        if (_todayReminders.length > 3)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/reminder-list'),
+              child: Text(
+                'View all ${_todayReminders.length} reminders',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'Poppins',
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton.icon(
+            onPressed:
+                () => Navigator.pushNamed(context, '/reminder-scheduler'),
+            icon: const Icon(Icons.add_circle_outline, size: 24),
+            label: const Text(
+              "Add New Medication",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildMenuSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,25 +820,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 16),
         _buildDashboardCard(
           context,
-          "Medicine Reminder",
-          "Set and track your medications",
-          Icons.medication_outlined,
-          '/reminder-scheduler',
-        ),
-        const SizedBox(height: 16),
-        _buildDashboardCard(
-          context,
-          "Medicine Lookup",
-          "Search for medicine information",
-          Icons.search,
+          "Medicine Information",
+          "Find details about your medicines",
+          Icons.medication,
           '/medicine-lookup',
         ),
         const SizedBox(height: 16),
         _buildDashboardCard(
           context,
-          "Symptom Checker",
-          "Check your symptoms",
-          Icons.healing,
+          "How Are You Feeling?",
+          "Check your health symptoms",
+          Icons.health_and_safety,
           '/symptom-tracker',
         ),
         const SizedBox(height: 16),
