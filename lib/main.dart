@@ -1,29 +1,31 @@
-import 'package:disease_management_app/screens/medicine_lookup.dart';
+import 'package:disease_management_app/screens/health_tool/medicine_lookup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/dashboard.dart';
 import 'screens/symptom_tracker/symptom_checker.dart';
-import 'screens/ai_diagnosis.dart';
+import 'screens/health_tool/ai_diagnosis.dart';
 import 'screens/forum/forum_page.dart';
 import 'screens/forum/forum_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/reminder_scheduler.dart';
+import 'screens/health_tool/reminder_scheduler.dart';
 import 'screens/daily_lifestyle_tracker.dart';
 import 'screens/appointment/appointment_booking.dart';
 import 'screens/appointment/booking_history.dart';
-import 'screens/user_authentication /login_screen.dart';
-import 'screens/user_authentication /welcome_screen.dart';
-import 'screens/user_authentication /forgot_password_screen.dart';
-import 'screens/user_authentication /signup_screen.dart';
-import 'screens/user_authentication /signorlog.dart';
-import 'screens/user_authentication /profile_setup_screen.dart';
-import 'screens/user_authentication /signup_med_screen.dart';
-import 'screens/user_authentication /edit_profile_screen.dart';
+import 'screens/user_authentication/login_screen.dart';
+import 'screens/user_authentication/welcome_screen.dart';
+import 'screens/user_authentication/forgot_password_screen.dart';
+import 'screens/user_authentication/signup_screen.dart';
+import 'screens/user_authentication/signorlog.dart';
+import 'screens/user_authentication/profile_setup_screen.dart';
+import 'screens/user_authentication/signup_med_screen.dart';
+import 'screens/user_authentication/edit_profile_screen.dart';
 import 'screens/appointment/appointment_screen.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'services/notification_service.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import 'screens/health_tool/health_tools_screen.dart';
+import 'screens/patient_profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,6 +120,8 @@ class MyApp extends StatelessWidget {
           '/signup_med': (context) => const SignUpMedScreen(),
           '/edit-profile': (context) => const EditProfileScreen(),
           '/appointment': (context) => const AppointmentScreen(),
+          '/health-tools': (context) => const HealthToolsScreen(),
+          '/patient-profile': (context) => const PatientProfileScreen(),
         },
       ),
     );
