@@ -183,6 +183,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // Top bar with settings icon
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.8),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 5,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.settings,
+                          color: Colors.black87,
+                          size: 30,
+                        ),
+                        onPressed: () => _openSettings(context),
+                        tooltip: 'Settings',
+                        padding: const EdgeInsets.all(8),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 // Profile Image
                 Container(

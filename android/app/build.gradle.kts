@@ -19,7 +19,7 @@ android {
 
     dependencies {
         implementation("androidx.core:core-ktx:1.12.0")
-        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     }
 
     kotlinOptions {
@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.disease_management_app"
-        minSdk = 21 // Updated to support SMS functionality
+        minSdk = 23  
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
