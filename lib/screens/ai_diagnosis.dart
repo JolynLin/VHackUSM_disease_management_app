@@ -322,10 +322,8 @@ class _SpeechScreenState extends State<SpeechScreen> {
       floatingActionButton: AvatarGlow(
         animate: _isListening,
         glowColor: Theme.of(context).primaryColor,
-        endRadius: 90.0,
         duration: const Duration(milliseconds: 2000),
         repeat: true,
-        showTwoGlows: true,
         child: FloatingActionButton(
           onPressed: _listen,
           backgroundColor:
