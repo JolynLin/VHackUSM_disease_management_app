@@ -9,16 +9,18 @@ import 'screens/forum/forum_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/reminder_scheduler.dart';
 import 'screens/daily_lifestyle_tracker.dart';
-import 'screens/appointment_booking.dart';
-import 'screens/booking_history.dart';
-import 'screens/user authentication /login_screen.dart';
-import 'screens/user authentication /welcome_screen.dart';
-import 'screens/user authentication /forgot_password_screen.dart';
-import 'screens/user authentication /signup_screen.dart';
-import 'screens/user authentication /signorlog.dart';
-import 'screens/user authentication /profile_setup_screen.dart';
-import 'screens/user authentication /signup_med_screen.dart';
-import 'screens/user authentication /edit_profile_screen.dart';
+import 'screens/appointment/appointment_booking.dart';
+import 'screens/appointment/booking_history.dart';
+import 'screens/user_authentication /login_screen.dart';
+import 'screens/user_authentication /welcome_screen.dart';
+import 'screens/user_authentication /forgot_password_screen.dart';
+import 'screens/user_authentication /signup_screen.dart';
+import 'screens/user_authentication /signorlog.dart';
+import 'screens/user_authentication /profile_setup_screen.dart';
+import 'screens/user_authentication /signup_med_screen.dart';
+import 'screens/user_authentication /edit_profile_screen.dart';
+import 'screens/appointment/appointment_screen.dart';
+import 'screens/patient_profile_screen.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'services/notification_service.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +29,26 @@ import 'dart:io';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
-  await Firebase.initializeApp();
+
+  try {
+    // Initialize Firebase with default options
+    final fbApp = await Firebase.initializeApp();
+    print('Firebase initialized successfully with app: ${fbApp.name}');
+    print('Firebase options: ${fbApp.options.projectId}');
+  } catch (e) {
+    print('Error initializing Firebase: $e');
+
+    // Try to initialize with a different approach if needed
+    if (e.toString().contains('duplicate app')) {
+      print('Attempting to get existing Firebase app...');
+      try {
+        final app = Firebase.app();
+        print('Retrieved existing Firebase app: ${app.name}');
+      } catch (secondError) {
+        print('Failed to retrieve existing app: $secondError');
+      }
+    }
+  }
 
   runApp(const MyApp());
 }
@@ -97,6 +118,8 @@ class MyApp extends StatelessWidget {
           '/profile_setup': (context) => const ProfileSetupScreen(),
           '/signup_med': (context) => const SignUpMedScreen(),
           '/edit-profile': (context) => const EditProfileScreen(),
+          '/appointment': (context) => const AppointmentScreen(),
+          '/patient-profile': (context) => const PatientProfileScreen(),
         },
       ),
     );

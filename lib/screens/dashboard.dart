@@ -817,10 +817,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 16),
         _buildDashboardCard(
           context,
+          "Patient Profile",
+          "View and edit your personal information",
+          Icons.person,
+          '/patient-profile',
+        ),
+        const SizedBox(height: 16),
+        _buildDashboardCard(
+          context,
           "Appointment Booking",
           "Schedule your medical appointments",
           Icons.calendar_month,
-          '/appointment-booking',
+          '/appointment',
         ),
         const SizedBox(height: 16),
         _buildDashboardCard(
