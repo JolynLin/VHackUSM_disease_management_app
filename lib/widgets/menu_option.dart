@@ -7,11 +7,11 @@ class MenuOption extends StatelessWidget {
   final VoidCallback? onTap;
 
   const MenuOption({
-    Key? key,
+    super.key,
     required this.title,
     required this.backgroundColor,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

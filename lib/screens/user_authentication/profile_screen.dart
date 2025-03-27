@@ -111,12 +111,12 @@ class ProfileScreen extends StatefulWidget {
   final String? profileImage;
 
   const ProfileScreen({
-    Key? key,
+    super.key,
     this.username = "Guest",
     this.age = "",
     this.gender = "",
     this.profileImage,
-  }) : super(key: key);
+  });
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();

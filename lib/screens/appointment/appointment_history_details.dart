@@ -9,13 +9,13 @@ class AppointmentHistoryDetails extends StatefulWidget {
   final String time;
 
   const AppointmentHistoryDetails({
-    Key? key,
+    super.key,
     required this.appointmentId,
     required this.doctorName,
     required this.hospitalName,
     required this.date,
     required this.time,
-  }) : super(key: key);
+  });
 
   @override
   State<AppointmentHistoryDetails> createState() =>

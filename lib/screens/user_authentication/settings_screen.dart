@@ -169,7 +169,7 @@ import '../../widgets/toggle_switch.dart';
 class SettingsScreen extends StatelessWidget {
   final VoidCallback onClose; // Add close function
 
-  const SettingsScreen({Key? key, required this.onClose}) : super(key: key);
+  const SettingsScreen({super.key, required this.onClose});
 
   @override
   Widget build(BuildContext context) {

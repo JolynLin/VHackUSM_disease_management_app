@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'check_appointment.dart';
 
 class AppointmentScreen extends StatelessWidget {
-  const AppointmentScreen({Key? key}) : super(key: key);
+  const AppointmentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

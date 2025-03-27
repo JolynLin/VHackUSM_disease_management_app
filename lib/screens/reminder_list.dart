@@ -151,7 +151,7 @@ class _ReminderListPageState extends State<ReminderListPage> {
                   ),
                 ),
               );
-            }).toList(),
+            }),
             const SizedBox(height: 30),
           ],
         ),
