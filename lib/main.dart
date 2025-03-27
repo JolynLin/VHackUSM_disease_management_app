@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
           '/signup': (context) => const SignUpScreen(),
           '/home': (context) => const DashboardScreen(),
           '/symptom-tracker': (context) => const SymptomCheckerPage(),
-          '/ai-diagnosis': (context) => const AIDiagnosisScreen(),
+          '/ai-diagnosis': (context) => SpeechScreen(),
           '/forum': (context) => const ForumPage(),
           '/medicine-lookup': (context) => const MedicineLookupPage(),
           '/reminder-scheduler': (context) => const ReminderSchedulerPage(),

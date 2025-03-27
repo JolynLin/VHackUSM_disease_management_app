@@ -23,13 +23,10 @@ class NotificationService {
     );
     const initSettings = InitializationSettings(android: androidSettings);
 
-    final platform =
-        _notifications
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >();
+    final platform = _notifications.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     if (platform != null) {
-      final hasPermission = await platform.requestPermission();
+      final hasPermission = await platform.areNotificationsEnabled();
       if (hasPermission == null || hasPermission == false) {
         print('Notification permission denied');
         return; // Exit if permissions are denied
@@ -109,9 +106,7 @@ class NotificationService {
               ? 'Reminders to take your medications'
               : 'Reminders for upcoming appointments',
         ),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: payload,
       );
 
@@ -174,10 +169,8 @@ class NotificationService {
     try {
       // Check if notifications are enabled on Android
       final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
-          _notifications
-              .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
+          _notifications.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
       if (androidPlugin != null) {
         final bool? areNotificationsEnabled =
