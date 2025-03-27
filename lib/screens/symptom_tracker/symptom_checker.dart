@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SymptomCheckerPage extends StatefulWidget {
-  const SymptomCheckerPage({Key? key}) : super(key: key);
+  const SymptomCheckerPage({super.key});
 
   @override
   _SymptomCheckerPageState createState() => _SymptomCheckerPageState();
@@ -10,7 +10,7 @@ class SymptomCheckerPage extends StatefulWidget {
 class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
   final TextEditingController _symptomController = TextEditingController();
   Map<String, dynamic>? _result;
-  List<String> _history = [];
+  final List<String> _history = [];
 
   final List<String> _commonSymptoms = [
     'Fever',
@@ -349,7 +349,7 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
                               ),
                             ),
                           )
-                          .toList(),
+                          ,
                     ],
                   ),
                 ),

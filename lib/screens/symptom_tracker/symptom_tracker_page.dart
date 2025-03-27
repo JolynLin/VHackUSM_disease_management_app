@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class SymptomTrackerPage extends StatefulWidget {
-  const SymptomTrackerPage({Key? key}) : super(key: key);
+  const SymptomTrackerPage({super.key});
 
   @override
   _SymptomTrackerPageState createState() => _SymptomTrackerPageState();
@@ -256,7 +256,7 @@ class _SymptomTrackerPageState extends State<SymptomTrackerPage> {
                         ],
                       ),
                     ))
-                .toList(),
+                ,
 
             // Notes Section
             const SizedBox(height: 20),

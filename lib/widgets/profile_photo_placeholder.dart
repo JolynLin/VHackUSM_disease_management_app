@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProfilePhotoPlaceholder extends StatelessWidget {
-  const ProfilePhotoPlaceholder({Key? key}) : super(key: key);
+  const ProfilePhotoPlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -8,6 +8,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -241,7 +243,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       reverse: true,
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
                         child: _text.isEmpty
                             ? Center(

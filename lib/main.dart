@@ -21,11 +21,9 @@ import 'screens/user_authentication/signup_med_screen.dart';
 import 'screens/user_authentication/edit_profile_screen.dart';
 import 'screens/appointment/appointment_screen.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'services/notification_service.dart';
-import 'package:flutter/services.dart';
-import 'dart:io';
 import 'screens/health_tool/health_tools_screen.dart';
 import 'screens/patient_profile_screen.dart';
+import 'screens/doctor/doctor_dashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -122,6 +120,7 @@ class MyApp extends StatelessWidget {
           '/appointment': (context) => const AppointmentScreen(),
           '/health-tools': (context) => const HealthToolsScreen(),
           '/patient-profile': (context) => const PatientProfileScreen(),
+          '/doctor-dashboard': (context) => const DoctorDashboard(),
         },
       ),
     );

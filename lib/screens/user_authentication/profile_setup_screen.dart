@@ -5,7 +5,7 @@
  import 'profile_screen.dart';
 
    class ProfileSetupScreen extends StatefulWidget {
-   const ProfileSetupScreen({Key? key}) : super(key: key);
+   const ProfileSetupScreen({super.key});
 
   @override
   _ProfileSetupScreenState createState() => _ProfileSetupScreenState();

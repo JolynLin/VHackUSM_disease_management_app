@@ -325,9 +325,9 @@ class SignUpMedScreenState extends State<SignUpMedScreen> {
                                         isPasswordValid &&
                                         isConfirmPasswordValid)
                                     ? () {
-                                      Navigator.pushNamed(
+                                      Navigator.pushReplacementNamed(
                                         context,
-                                        '/profile_setup',
+                                        '/doctor-dashboard',
                                       );
                                     }
                                     : null,

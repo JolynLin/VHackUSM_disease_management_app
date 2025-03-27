@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'forum_models.dart';
 
 class ForumProvider with ChangeNotifier {
-  List<ForumPost> _posts = [];
-  String _currentUserId = 'user1'; // In a real app, this would come from authentication
-  String _currentUserName = 'John Doe'; // In a real app, this would come from authentication
+  final List<ForumPost> _posts = [];
+  final String _currentUserId = 'user1'; // In a real app, this would come from authentication
+  final String _currentUserName = 'John Doe'; // In a real app, this would come from authentication
 
   List<ForumPost> get posts => _posts;
   String get currentUserId => _currentUserId;

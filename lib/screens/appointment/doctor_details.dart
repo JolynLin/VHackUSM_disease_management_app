@@ -7,11 +7,11 @@ class DoctorDetailsScreen extends StatelessWidget {
   final String hospitalName;
 
   const DoctorDetailsScreen({
-    Key? key,
+    super.key,
     required this.doctorId,
     required this.doctorName,
     required this.hospitalName,
-  }) : super(key: key);
+  });
 
   Future<Map<String, dynamic>> _getDoctorDetails() async {
     try {

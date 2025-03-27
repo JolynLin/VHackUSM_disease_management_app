@@ -479,7 +479,7 @@ class _CheckAppointmentScreenState extends State<CheckAppointmentScreen>
 
   void showCancelDialog(
       BuildContext context, Map<String, dynamic> appointment) {
-    final TextEditingController _controller = TextEditingController();
+    final TextEditingController controller = TextEditingController();
     bool isConfirmed = false;
 
     showDialog(
@@ -499,7 +499,7 @@ class _CheckAppointmentScreenState extends State<CheckAppointmentScreen>
                 ),
                 const SizedBox(height: 16),
                 TextField(
-                  controller: _controller,
+                  controller: controller,
                   onChanged: (value) {
                     setState(() {
                       isConfirmed = value.trim().toLowerCase() == "cancel";
