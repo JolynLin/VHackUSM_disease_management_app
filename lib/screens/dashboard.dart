@@ -63,7 +63,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _initializeNotifications() async {
     await NotificationService.init();
-    NotificationService.listenToAppointments();
     NotificationService.listenToMedicineReminders();
   }
 
@@ -114,6 +113,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: Colors.blue.shade800,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person, size: 28),
+            onPressed: () => Navigator.pushNamed(context, '/patient-profile'),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () {
@@ -122,22 +128,109 @@ class _DashboardScreenState extends State<DashboardScreen> {
           return Future.value();
         },
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
-              _buildCheckInCard(alreadyCheckedIn),
-              const SizedBox(height: 24),
+              _buildUserHeader(),
+              const SizedBox(height: 16),
+              _buildCompactCalendar(),
+              const SizedBox(height: 16),
+              _buildCheckInStrip(alreadyCheckedIn),
+              const SizedBox(height: 16),
               _buildMedicineRemindersSection(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               _buildHealthMetricsSection(),
-              const SizedBox(height: 24),
-              _buildCalendarCard(),
-              const SizedBox(height: 24),
-              _buildMenuSection(),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton.icon(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/health-tools'),
+                  icon: const Icon(Icons.apps, size: 28),
+                  label: const Text(
+                    'More Health Tools',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserHeader() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.blue.shade100,
+              child: Icon(
+                Icons.person,
+                size: 36,
+                color: Colors.blue.shade700,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Hi,",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  const Text(
+                    "Mostafiz",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () => Navigator.pushNamed(context, '/patient-profile'),
+              icon: const Icon(Icons.edit, size: 20),
+              label: const Text(
+                'Edit Profile',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(color: Colors.blue.shade200),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -392,222 +485,386 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildCheckInCard(bool alreadyCheckedIn) {
+  Widget _buildCheckInStrip(bool alreadyCheckedIn) {
     return Card(
       elevation: 4,
-      color: alreadyCheckedIn ? Colors.green.shade100 : Colors.orange.shade100,
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(
-                  alreadyCheckedIn ? Icons.check_circle : Icons.pending_actions,
-                  size: 48,
-                  color: alreadyCheckedIn ? Colors.green : Colors.orange,
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        alreadyCheckedIn
-                            ? "Daily Check-In Completed"
-                            : "Daily Check-In Required",
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        alreadyCheckedIn
-                            ? "Great job! You've logged your health for today."
-                            : "Take a moment to complete your health check-in.",
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: alreadyCheckedIn ? Colors.grey : Colors.blue,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: Icon(
-                  alreadyCheckedIn ? Icons.check_circle : Icons.add_circle,
-                  size: 32,
-                ),
-                label: Text(
-                  alreadyCheckedIn ? "Completed" : "Check In Now",
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onPressed: () =>
-                    Navigator.pushNamed(context, '/lifestyle-tracker'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCalendarCard() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.calendar_today, size: 32, color: Colors.blue),
-                const SizedBox(width: 12),
-                const Text(
-                  "Health Check-In Calendar",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TableCalendar(
-              focusedDay: _focusedDay,
-              firstDay: DateTime.utc(2023, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              headerStyle: const HeaderStyle(
-                titleCentered: true,
-                formatButtonVisible: false,
-                titleTextStyle: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-                leftChevronIcon: Icon(Icons.chevron_left, size: 32),
-                rightChevronIcon: Icon(Icons.chevron_right, size: 32),
-              ),
-              calendarStyle: CalendarStyle(
-                isTodayHighlighted: true,
-                selectedDecoration: BoxDecoration(
-                  color: Colors.blue.shade700,
-                  shape: BoxShape.circle,
-                ),
-                todayDecoration: BoxDecoration(
-                  color: Colors.blue.shade400,
-                  shape: BoxShape.circle,
-                ),
-                markerDecoration: BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                ),
-                defaultTextStyle: const TextStyle(fontSize: 18),
-                weekendTextStyle: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-                outsideTextStyle: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey,
-                ),
-                holidayTextStyle: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-                disabledTextStyle: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey,
-                ),
-                cellMargin: const EdgeInsets.all(4),
-              ),
-              daysOfWeekStyle: const DaysOfWeekStyle(
-                weekdayStyle: TextStyle(fontSize: 16),
-                weekendStyle: TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              calendarBuilders: CalendarBuilders(
-                markerBuilder: (context, date, events) {
-                  final dateStr = DateFormat('yyyy-MM-dd').format(date);
-                  if (_checkedInDates.contains(dateStr)) {
-                    return Positioned(
-                      bottom: 1,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade100,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 28,
-                        ),
-                      ),
-                    );
-                  }
-                  return const SizedBox();
-                },
-                defaultBuilder: (context, day, focusedDay) {
-                  final dateStr = DateFormat('yyyy-MM-dd').format(day);
-                  final isCheckedIn = _checkedInDates.contains(dateStr);
-                  return Container(
-                    margin: const EdgeInsets.all(4),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isCheckedIn ? Colors.green.shade50 : null,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '${day.day}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight:
-                            isCheckedIn ? FontWeight.bold : FontWeight.normal,
-                        color: isCheckedIn ? Colors.green.shade700 : null,
-                      ),
-                    ),
-                  );
-                },
+            const Text(
+              "How Are You Feeling Today?",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
               ),
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildLegendItem("Today", Colors.blue.shade400),
-                _buildLegendItem("Selected", Colors.blue.shade700),
-                _buildLegendItem("Checked In", Colors.green),
+                _buildMoodOption('😊', 'Great'),
+                _buildMoodOption('😌', 'Good'),
+                _buildMoodOption('😕', 'Okay'),
+                _buildMoodOption('😫', 'Bad'),
               ],
             ),
+            if (!alreadyCheckedIn) ...[
+              const SizedBox(height: 16),
+              InkWell(
+                onTap: () => Navigator.pushNamed(context, '/lifestyle-tracker'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Start Health Check-In",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMoodOption(String emoji, String label) {
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, '/lifestyle-tracker'),
+      child: Column(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(32),
+            ),
+            child: Center(
+              child: Text(
+                emoji,
+                style: const TextStyle(fontSize: 32),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactCalendar() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today,
+                        size: 24, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    const Text(
+                      "Recent Check-Ins",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                TextButton.icon(
+                  onPressed: () => _showFullCalendar(context),
+                  icon: const Icon(Icons.expand_more),
+                  label: const Text('View All'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Show only last 3 days of check-ins
+            ...List.generate(3, (index) {
+              final date = DateTime.now().subtract(Duration(days: index));
+              final dateStr = DateFormat('yyyy-MM-dd').format(date);
+              final isCheckedIn = _checkedInDates.contains(dateStr);
+              final isToday = index == 0;
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: isToday
+                            ? Colors.blue.shade100
+                            : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          DateFormat('EEE').format(date),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: isToday ? Colors.blue : Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        DateFormat('MMM d').format(date),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: isToday ? Colors.blue : Colors.black87,
+                          fontWeight:
+                              isToday ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isCheckedIn
+                            ? Colors.green.shade100
+                            : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isCheckedIn ? Icons.check_circle : Icons.cancel,
+                            size: 16,
+                            color: isCheckedIn ? Colors.green : Colors.grey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            isCheckedIn ? 'Checked In' : 'Not Checked',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isCheckedIn ? Colors.green : Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showFullCalendar(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Health Check-In History",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TableCalendar(
+                      focusedDay: _focusedDay,
+                      firstDay: DateTime.utc(2023, 1, 1),
+                      lastDay: DateTime.utc(2030, 12, 31),
+                      selectedDayPredicate: (day) =>
+                          isSameDay(_selectedDay, day),
+                      onDaySelected: (selectedDay, focusedDay) {
+                        setState(() {
+                          _selectedDay = selectedDay;
+                          _focusedDay = focusedDay;
+                        });
+                      },
+                      headerStyle: const HeaderStyle(
+                        titleCentered: true,
+                        formatButtonVisible: false,
+                        titleTextStyle: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                        leftChevronIcon: Icon(Icons.chevron_left, size: 24),
+                        rightChevronIcon: Icon(Icons.chevron_right, size: 24),
+                      ),
+                      calendarStyle: CalendarStyle(
+                        isTodayHighlighted: true,
+                        selectedDecoration: BoxDecoration(
+                          color: Colors.blue.shade700,
+                          shape: BoxShape.circle,
+                        ),
+                        todayDecoration: BoxDecoration(
+                          color: Colors.blue.shade400,
+                          shape: BoxShape.circle,
+                        ),
+                        markerDecoration: BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                        ),
+                        defaultTextStyle: const TextStyle(fontSize: 16),
+                        weekendTextStyle: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        outsideTextStyle: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                        holidayTextStyle: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        disabledTextStyle: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                        cellMargin: const EdgeInsets.all(4),
+                      ),
+                      daysOfWeekStyle: const DaysOfWeekStyle(
+                        weekdayStyle: TextStyle(fontSize: 16),
+                        weekendStyle: TextStyle(
+                          fontSize: 16,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      calendarBuilders: CalendarBuilders(
+                        markerBuilder: (context, date, events) {
+                          final dateStr = DateFormat('yyyy-MM-dd').format(date);
+                          if (_checkedInDates.contains(dateStr)) {
+                            return Positioned(
+                              bottom: 1,
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.shade100,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 16,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                        defaultBuilder: (context, day, focusedDay) {
+                          final dateStr = DateFormat('yyyy-MM-dd').format(day);
+                          final isCheckedIn = _checkedInDates.contains(dateStr);
+                          return Container(
+                            margin: const EdgeInsets.all(2),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: isCheckedIn ? Colors.green.shade50 : null,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              '${day.day}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: isCheckedIn
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color:
+                                    isCheckedIn ? Colors.green.shade700 : null,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildLegendItem("Today", Colors.blue.shade400),
+                    _buildLegendItem("Selected", Colors.blue.shade700),
+                    _buildLegendItem("Checked In", Colors.green),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -617,12 +874,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Row(
       children: [
         Container(
-          width: 24,
-          height: 24,
+          width: 16,
+          height: 16,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        const SizedBox(width: 8),
-        Text(label, style: const TextStyle(fontSize: 16)),
+        const SizedBox(width: 4),
+        Text(label, style: const TextStyle(fontSize: 12)),
       ],
     );
   }
@@ -803,175 +1060,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildMenuSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Health Tools",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        _buildDashboardCard(
-          context,
-          "Patient Profile",
-          "View and edit your personal information",
-          Icons.person,
-          '/patient-profile',
-        ),
-        const SizedBox(height: 16),
-        _buildDashboardCard(
-          context,
-          "Appointment Booking",
-          "Schedule your medical appointments",
-          Icons.calendar_month,
-          '/appointment',
-        ),
-        const SizedBox(height: 16),
-        _buildDashboardCard(
-          context,
-          "Medicine Information",
-          "Find details about your medicines",
-          Icons.medication,
-          '/medicine-lookup',
-        ),
-        const SizedBox(height: 16),
-        _buildDashboardCard(
-          context,
-          "How Are You Feeling?",
-          "Check your health symptoms",
-          Icons.health_and_safety,
-          '/symptom-tracker',
-        ),
-        const SizedBox(height: 16),
-        _buildDashboardCard(
-          context,
-          "AI Diagnosis",
-          "Get AI-powered health insights",
-          Icons.smart_toy_outlined,
-          '/ai-diagnosis',
-        ),
-        const SizedBox(height: 16),
-        _buildDashboardCard(
-          context,
-          "Community Forum",
-          "Connect with others",
-          Icons.people_outline,
-          '/forum',
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: SizedBox(
-            width: double.infinity,
-            height: 60,
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  // First run the debug check to see if notifications are enabled
-                  await NotificationService.debugNotificationSettings();
-
-                  // Then send the regular test notifications
-                  await NotificationService.sendTestNotifications();
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Test notifications sent! Check your device in a minute.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Error: ${e.toString()}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      backgroundColor: Colors.red,
-                      duration: const Duration(seconds: 5),
-                    ),
-                  );
-                }
-              },
-              icon: const Icon(Icons.notifications_active, size: 28),
-              label: const Text(
-                'Test Reminders',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDashboardCard(
-    BuildContext context,
-    String title,
-    String subtitle,
-    IconData icon,
-    String route,
-  ) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 3,
-      child: InkWell(
-        onTap: () => Navigator.pushNamed(context, route),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, size: 36, color: Colors.blue),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios, size: 24, color: Colors.grey),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
