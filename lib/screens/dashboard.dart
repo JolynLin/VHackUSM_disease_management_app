@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../services/notification_service.dart';
+import 'health_metrics_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -133,35 +134,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildUserHeader(),
-              const SizedBox(height: 16),
-              _buildCompactCalendar(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               _buildCheckInStrip(alreadyCheckedIn),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              _buildCompactCalendar(),
+              const SizedBox(height: 24),
               _buildMedicineRemindersSection(),
-              const SizedBox(height: 16),
-              _buildHealthMetricsSection(),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              HealthMetricsWidget(healthData: healthData),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 height: 60,
                 child: ElevatedButton.icon(
                   onPressed: () =>
                       Navigator.pushNamed(context, '/health-tools'),
-                  icon: const Icon(Icons.apps, size: 28),
+                  icon: const Icon(Icons.apps, size: 32),
                   label: const Text(
                     'More Health Tools',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.blue.shade700,
+                    elevation: 4,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -200,7 +208,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   const Text(
-                    "Mostafiz",
+                    "John Doe",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -236,262 +244,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildHealthMetricsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 8.0, bottom: 16.0),
-          child: Text(
-            "Your Health Metrics",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins',
-              color: Colors.black87,
-            ),
-          ),
-        ),
-        _buildBloodPressureCard(),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildMetricCard(
-                "Blood Sugar",
-                "${healthData['bloodSugar']['value']}",
-                healthData['bloodSugar']['unit'],
-                healthData['bloodSugar']['lastChecked'],
-                healthData['bloodSugar']['status'],
-                Icons.water_drop,
-                Colors.red.shade100,
-                Colors.red,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildMetricCard(
-                "Heart Rate",
-                "${healthData['heartRate']['value']}",
-                healthData['heartRate']['unit'],
-                healthData['heartRate']['lastChecked'],
-                healthData['heartRate']['status'],
-                Icons.favorite,
-                Colors.pink.shade100,
-                Colors.pink,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildMetricCard(
-                "Weight",
-                "${healthData['weight']['value']}",
-                healthData['weight']['unit'],
-                healthData['weight']['lastChecked'],
-                healthData['weight']['status'],
-                Icons.monitor_weight,
-                Colors.orange.shade100,
-                Colors.orange,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildMetricCard(
-                "Temperature",
-                "${healthData['temperature']['value']}",
-                healthData['temperature']['unit'],
-                healthData['temperature']['lastChecked'],
-                healthData['temperature']['status'],
-                Icons.thermostat,
-                Colors.purple.shade100,
-                Colors.purple,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBloodPressureCard() {
-    return Card(
-      elevation: 4,
-      color: Colors.blue.shade100,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.favorite_border,
-                  size: 32,
-                  color: Colors.blue.shade700,
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  "Blood Pressure",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    const Text(
-                      "Systolic",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black87,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                    Text(
-                      "${healthData['bloodPressure']['systolic']}",
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade700,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "/",
-                    style: TextStyle(
-                      fontSize: 40,
-                      color: Colors.blue.shade700,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Column(
-                  children: [
-                    const Text(
-                      "Diastolic",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black87,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                    Text(
-                      "${healthData['bloodPressure']['diastolic']}",
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade700,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Text(
-                "Last checked: ${healthData['bloodPressure']['lastChecked']}",
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMetricCard(
-    String title,
-    String value,
-    String unit,
-    String lastChecked,
-    String status,
-    IconData icon,
-    Color backgroundColor,
-    Color iconColor,
-  ) {
-    return Card(
-      elevation: 4,
-      color: backgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 28, color: iconColor),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Text(
-                "$value $unit",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: iconColor,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Center(
-              child: Text(
-                "Last checked: $lastChecked",
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildCheckInStrip(bool alreadyCheckedIn) {
     return Card(
       elevation: 4,
       color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -501,36 +260,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Poppins',
+                color: Colors.black,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildMoodOption('😊', 'Great'),
-                _buildMoodOption('😌', 'Good'),
-                _buildMoodOption('😕', 'Okay'),
-                _buildMoodOption('😫', 'Bad'),
+                _buildMoodOption('😊', 'Great', Colors.green),
+                _buildMoodOption('😌', 'Good', Colors.blue),
+                _buildMoodOption('😕', 'Okay', Colors.orange),
+                _buildMoodOption('😫', 'Bad', Colors.red),
               ],
             ),
             if (!alreadyCheckedIn) ...[
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: () => Navigator.pushNamed(context, '/lifestyle-tracker'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton.icon(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/lifestyle-tracker'),
+                  icon: const Icon(Icons.check_circle_outline, size: 28),
+                  label: const Text(
+                    "Start Health Check-In",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
                   ),
-                  child: const Center(
-                    child: Text(
-                      "Start Health Check-In",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue.shade700,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                 ),
@@ -542,35 +307,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildMoodOption(String emoji, String label) {
-    return InkWell(
-      onTap: () => Navigator.pushNamed(context, '/lifestyle-tracker'),
-      child: Column(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Center(
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 32),
+  Widget _buildMoodOption(String emoji, String label, Color color) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          // Navigate to lifestyle tracker with selected mood
+          Navigator.pushNamed(
+            context,
+            '/lifestyle-tracker',
+            arguments: {'mood': label},
+          );
+        },
+        borderRadius: BorderRadius.circular(36),
+        child: Column(
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(36),
+                border: Border.all(color: color.withOpacity(0.3), width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 36),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                color: color,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Poppins',
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
