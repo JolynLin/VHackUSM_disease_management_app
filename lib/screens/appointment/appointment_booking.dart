@@ -106,8 +106,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
         });
       }
 
-      final userLat =
-          _userLocation?.latitude ??
+      final userLat = _userLocation?.latitude ??
           3.0738; // Default to Sunway area if location not available
       final userLng = _userLocation?.longitude ?? 101.5183;
 
@@ -219,52 +218,51 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
       if (!mounted) return;
       showDialog(
         context: context,
-        builder:
-            (context) => AlertDialog(
-              title: const Text(
-                'Appointment Confirmed',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Your appointment has been booked successfully!',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Doctor: $selectedDoctor',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      'Clinic: $selectedClinic',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      'Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      'Time: ${selectedTime.format(context)}',
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
+        builder: (context) => AlertDialog(
+          title: const Text(
+            'Appointment Confirmed',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your appointment has been booked successfully!',
+                  style: const TextStyle(fontSize: 18),
                 ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    Navigator.pop(context); // Go back to previous screen
-                  },
-                  child: const Text('OK', style: TextStyle(fontSize: 18)),
+                const SizedBox(height: 16),
+                Text(
+                  'Doctor: $selectedDoctor',
+                  style: const TextStyle(fontSize: 18),
                 ),
+                Text(
+                  'Clinic: $selectedClinic',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  'Date: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  'Time: ${selectedTime.format(context)}',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 16),
               ],
             ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(context); // Go back to previous screen
+              },
+              child: const Text('OK', style: TextStyle(fontSize: 18)),
+            ),
+          ],
+        ),
       );
     } catch (e) {
       print('Error booking appointment: $e'); // For debugging
@@ -309,160 +307,159 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
           const SizedBox(width: 8),
         ],
       ),
-      body:
-          isLoading
-              ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text(
-                      "Loading nearby clinics...",
-                      style: TextStyle(fontSize: 24),
+      body: isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text(
+                    "Loading nearby clinics...",
+                    style: TextStyle(fontSize: 24),
+                  ),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _sectionTitle('📍 Select Nearby Clinic'),
+                  if (clinicData.isEmpty)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'No clinics found nearby. Please try again later.',
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  else
+                    ...clinicData.map((clinic) => _buildClinicCard(clinic)),
+                  if (selectedClinic.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    _sectionTitle('Choose Doctor'),
+                    if (doctorsForClinic.isEmpty)
+                      const Center(child: CircularProgressIndicator())
+                    else
+                      ...doctorsForClinic.map(
+                        (doc) => _buildSelectableCard(
+                          label: doc,
+                          selected: selectedDoctor == doc,
+                          onTap: () => setState(() => selectedDoctor = doc),
+                        ),
+                      ),
+                    const SizedBox(height: 24),
+                    _sectionTitle('Pick Date and Time'),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.date_range, size: 32),
+                                label: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  final picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: selectedDate,
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime.now().add(
+                                      const Duration(days: 365),
+                                    ),
+                                  );
+                                  if (picked != null) {
+                                    setState(() => selectedDate = picked);
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue.shade700,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.access_time, size: 32),
+                                label: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    selectedTime.format(context),
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  final picked = await showTimePicker(
+                                    context: context,
+                                    initialTime: selectedTime,
+                                  );
+                                  if (picked != null) {
+                                    setState(() => selectedTime = picked);
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue.shade700,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 70,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(
+                          Icons.check_circle_outline,
+                          size: 32,
+                        ),
+                        label: const Text(
+                          "Book Appointment",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: _submitAppointment,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green.shade700,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
-                ),
-              )
-              : SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _sectionTitle('📍 Select Nearby Clinic'),
-                    if (clinicData.isEmpty)
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            'No clinics found nearby. Please try again later.',
-                            style: TextStyle(fontSize: 18),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    else
-                      ...clinicData.map((clinic) => _buildClinicCard(clinic)),
-                    if (selectedClinic.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      _sectionTitle('Choose Doctor'),
-                      if (doctorsForClinic.isEmpty)
-                        const Center(child: CircularProgressIndicator())
-                      else
-                        ...doctorsForClinic.map(
-                          (doc) => _buildSelectableCard(
-                            label: doc,
-                            selected: selectedDoctor == doc,
-                            onTap: () => setState(() => selectedDoctor = doc),
-                          ),
-                        ),
-                      const SizedBox(height: 24),
-                      _sectionTitle('Pick Date and Time'),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  icon: const Icon(Icons.date_range, size: 32),
-                                  label: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                  onPressed: () async {
-                                    final picked = await showDatePicker(
-                                      context: context,
-                                      initialDate: selectedDate,
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime.now().add(
-                                        const Duration(days: 365),
-                                      ),
-                                    );
-                                    if (picked != null) {
-                                      setState(() => selectedDate = picked);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade700,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  icon: const Icon(Icons.access_time, size: 32),
-                                  label: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      selectedTime.format(context),
-                                      style: const TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                  onPressed: () async {
-                                    final picked = await showTimePicker(
-                                      context: context,
-                                      initialTime: selectedTime,
-                                    );
-                                    if (picked != null) {
-                                      setState(() => selectedTime = picked);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade700,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 70,
-                        child: ElevatedButton.icon(
-                          icon: const Icon(
-                            Icons.check_circle_outline,
-                            size: 32,
-                          ),
-                          label: const Text(
-                            "Book Appointment",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: _submitAppointment,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade700,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                ],
               ),
+            ),
     );
   }
 
@@ -533,10 +530,9 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color:
-                              isSelected
-                                  ? Colors.blue.shade900
-                                  : Colors.black87,
+                          color: isSelected
+                              ? Colors.blue.shade900
+                              : Colors.black87,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -545,20 +541,18 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                           Icon(
                             Icons.directions_walk,
                             size: 24,
-                            color:
-                                isSelected
-                                    ? Colors.blue.shade900
-                                    : Colors.blue.shade700,
+                            color: isSelected
+                                ? Colors.blue.shade900
+                                : Colors.blue.shade700,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             '${clinic['distance']} km away',
                             style: TextStyle(
                               fontSize: 20,
-                              color:
-                                  isSelected
-                                      ? Colors.blue.shade900
-                                      : Colors.grey.shade700,
+                              color: isSelected
+                                  ? Colors.blue.shade900
+                                  : Colors.grey.shade700,
                             ),
                           ),
                         ],
@@ -597,10 +591,9 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                   Icon(
                     Icons.location_on,
                     size: 24,
-                    color:
-                        isSelected
-                            ? Colors.blue.shade700
-                            : Colors.blue.shade700,
+                    color: isSelected
+                        ? Colors.blue.shade700
+                        : Colors.blue.shade700,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -608,10 +601,9 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                       clinic['address'],
                       style: TextStyle(
                         fontSize: 20,
-                        color:
-                            isSelected
-                                ? Colors.blue.shade900
-                                : Colors.grey.shade800,
+                        color: isSelected
+                            ? Colors.blue.shade900
+                            : Colors.grey.shade800,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

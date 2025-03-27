@@ -1,5 +1,6 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:highlight_text/highlight_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 void main() {
@@ -34,11 +35,77 @@ class _SpeechScreenState extends State<SpeechScreen> {
   String _text = '';
   double _confidence = 1.0;
   bool _processingText = false;
+  bool _isEmulator = false;
+
+  // Add highlighting words
+  final Map<String, HighlightedWord> _highlights = {
+    'headache': HighlightedWord(
+      onTap: () => print('headache'),
+      textStyle: const TextStyle(
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    'fever': HighlightedWord(
+      onTap: () => print('fever'),
+      textStyle: const TextStyle(
+        color: Colors.orange,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    'pain': HighlightedWord(
+      onTap: () => print('pain'),
+      textStyle: const TextStyle(
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    'tired': HighlightedWord(
+      onTap: () => print('tired'),
+      textStyle: const TextStyle(
+        color: Colors.purple,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    'cough': HighlightedWord(
+      onTap: () => print('cough'),
+      textStyle: const TextStyle(
+        color: Colors.brown,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  };
 
   @override
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
+    _checkIfEmulator();
+  }
+
+  Future<void> _checkIfEmulator() async {
+    setState(() {
+      _isEmulator = true;
+    });
+  }
+
+  void _simulateVoiceInput() {
+    setState(() {
+      _isListening = true;
+      _processingText = true;
+    });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (!mounted) return;
+      setState(() {
+        _text = 'This is a simulated voice input for testing purposes. '
+            'I have a headache and fever since yesterday. '
+            'My temperature is 38.5°C and I feel tired.';
+        _confidence = 0.85;
+        _isListening = false;
+        _processingText = false;
+      });
+    });
   }
 
   @override
@@ -173,6 +240,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
                   const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
+                      reverse: true,
                       child: Container(
                         width: double.infinity,
                         child: _text.isEmpty
@@ -189,9 +257,10 @@ class _SpeechScreenState extends State<SpeechScreen> {
                                   textAlign: TextAlign.center,
                                 ),
                               )
-                            : Text(
-                                _text,
-                                style: const TextStyle(
+                            : TextHighlight(
+                                text: _text,
+                                words: _highlights,
+                                textStyle: const TextStyle(
                                   fontSize: 24,
                                   color: Colors.black87,
                                   height: 1.5,
@@ -250,21 +319,13 @@ class _SpeechScreenState extends State<SpeechScreen> {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        height: 90,
-        width: 90,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: _isListening
-              ? [
-                  BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5),
-                    spreadRadius: 15,
-                    blurRadius: 30,
-                  ),
-                ]
-              : null,
-        ),
+      floatingActionButton: AvatarGlow(
+        animate: _isListening,
+        glowColor: Theme.of(context).primaryColor,
+        endRadius: 90.0,
+        duration: const Duration(milliseconds: 2000),
+        repeat: true,
+        showTwoGlows: true,
         child: FloatingActionButton(
           onPressed: _listen,
           backgroundColor:
@@ -285,6 +346,11 @@ class _SpeechScreenState extends State<SpeechScreen> {
       setState(() {
         _processingText = true;
       });
+
+      if (_isEmulator) {
+        _simulateVoiceInput();
+        return;
+      }
 
       bool available = await _speech.initialize(
         onStatus: (status) {
