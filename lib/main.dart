@@ -20,7 +20,6 @@ import 'screens/user_authentication /profile_setup_screen.dart';
 import 'screens/user_authentication /signup_med_screen.dart';
 import 'screens/user_authentication /edit_profile_screen.dart';
 import 'screens/appointment/appointment_screen.dart';
-import 'screens/patient_profile_screen.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'services/notification_service.dart';
 import 'package:flutter/services.dart';
@@ -119,7 +118,6 @@ class MyApp extends StatelessWidget {
           '/signup_med': (context) => const SignUpMedScreen(),
           '/edit-profile': (context) => const EditProfileScreen(),
           '/appointment': (context) => const AppointmentScreen(),
-          '/patient-profile': (context) => const PatientProfileScreen(),
         },
       ),
     );
